@@ -6,7 +6,7 @@ const products = [
         material: "Plata 925",
         size: "Ajustable",
         price: 4500,
-        image: "/assets/anillo.jpg"
+        image: "/products/pulsera-category.jpeg"
     },
     {
         id: 2,
@@ -15,7 +15,7 @@ const products = [
         material: "Acero Inoxidable",
         size: "2 cm",
         price: 2500,
-        image: "/assets/aros.jpg"
+        image: "/products/react.svg"
     },
     {
         id: 3,
@@ -24,7 +24,7 @@ const products = [
         material: "Plata 925",
         size: "45 cm",
         price: 6000,
-        image: "/assets/cadenita.jpg"
+        image: "/products/cadenita.jpg"
     }
 ];
 

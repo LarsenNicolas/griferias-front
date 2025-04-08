@@ -19,7 +19,7 @@ export default function Checkout() {
     const total = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
 
     return (
-        <Layout>
+        <div className="container mx-auto p-4">
             <h2 className="text-2xl font-bold mb-4">Finaliza tu Compra</h2>
             {isLoading ? (
                 <div className="flex justify-center items-center">
@@ -43,6 +43,6 @@ export default function Checkout() {
                     <Button onClick={handleBuy} className="mt-4">Confirmar Compra</Button>
                 </div>
             )}
-        </Layout>
+        </div>
     );
 }
