@@ -1,31 +1,69 @@
-import { useCart } from "../context/CartContext";
+import { useCartStore } from "../store/useCartStore";
+import { Trash2 } from "lucide-react";
 
 const Cart = () => {
-    const { cart, removeFromCart, clearCart } = useCart();
+    const cart = useCartStore((state) => state.cart);
+    const removeFromCart = useCartStore((state) => state.removeFromCart);
 
-    const total = cart.reduce((acc, item) => acc + item.price * item.quantity, 0);
+    const total = cart.reduce(
+        (acc, item) => acc + item.quantity * item.product.price,
+        0
+    );
 
     return (
-        <div className="container mx-auto p-4">
-            <h2 className="text-2xl font-bold mb-4">Carrito</h2>
+        <div className="container mx-auto px-4 py-10">
+            <h2 className="text-3xl font-bold mb-6 text-gray-800">Tu carrito</h2>
 
             {cart.length === 0 ? (
-                <p>El carrito está vacío.</p>
+                <p className="text-gray-500">No hay productos en el carrito.</p>
             ) : (
-                <div>
-                    {cart.map(item => (
-                        <div key={item.id} className="flex justify-between items-center border-b py-2">
-                            <div>
-                                <h3 className="font-semibold">{item.name}</h3>
-                                <p>Cantidad: {item.quantity}</p>
-                                <p>Precio unitario: ${item.price}</p>
+                <div className="space-y-6">
+                    {cart.map((item) => (
+                        <div
+                            key={item.product.id}
+                            className="flex flex-col sm:flex-row items-center gap-6 bg-white rounded-xl shadow-md p-4"
+                        >
+                            <img
+                                src={item.product.image}
+                                alt={item.product.name}
+                                className="w-full sm:w-32 h-32 object-cover rounded-md"
+                            />
+
+                            <div className="flex-1 w-full space-y-2 text-center sm:text-left">
+                                <h3 className="text-xl font-semibold text-gray-800">
+                                    {item.product.name}
+                                </h3>
+                                <p className="text-gray-600">{item.product.description}</p>
+                                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between text-sm gap-1 sm:gap-4 mt-2">
+                                    <span className="text-gray-700">
+                                        Cantidad: <strong>{item.quantity}</strong>
+                                    </span>
+                                    <span className="text-gray-700">
+                                        Precio unitario: ${item.product.price}
+                                    </span>
+                                    <span className="font-semibold text-primary">
+                                        Subtotal: ${item.product.price * item.quantity}
+                                    </span>
+                                </div>
                             </div>
-                            <button onClick={() => removeFromCart(item.id)} className="text-red-500">Eliminar</button>
+
+                            <button
+                                onClick={() => removeFromCart(item.product.id)}
+                                className="text-red-500 hover:text-red-700 transition"
+                                title="Quitar del carrito"
+                            >
+                                <Trash2 className="w-6 h-6" />
+                            </button>
                         </div>
                     ))}
-                    <div className="mt-4">
-                        <p className="font-bold">Total: ${total}</p>
-                        <button onClick={clearCart} className="bg-red-500 text-white py-2 px-4 rounded mt-2">Vaciar Carrito</button>
+
+                    <div className="mt-8 text-right">
+                        <p className="text-xl font-bold text-gray-800">
+                            Total: <span className="text-primary">${total}</span>
+                        </p>
+                        <button className="mt-4 px-6 py-3 bg-primaryhover text-white rounded-md hover:bg-primary transition">
+                            Finalizar compra
+                        </button>
                     </div>
                 </div>
             )}

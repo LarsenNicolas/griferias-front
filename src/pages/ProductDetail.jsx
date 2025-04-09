@@ -1,45 +1,73 @@
 import { useParams } from "react-router-dom";
 import products from "../../mock/products";
-import { useCart } from "../context/CartContext";
-import { useState, useEffect } from "react";
+import { useState } from "react";
+import { useCartStore } from "../store/useCartStore";
+import Button from "../components/Button.jsx";
+import {toast} from "react-toastify";
+import {CheckCircle} from "lucide-react";
 
-export default function ProductDetail() {
+const ProductDetail = () => {
     const { id } = useParams();
-    const { addToCart } = useCart();
-    const [product, setProduct] = useState(null);
+    const product = products.find((p) => String(p.id) === id);
     const [quantity, setQuantity] = useState(1);
+    const addToCart = useCartStore((state) => state.addToCart);
 
-    useEffect(() => {
-        const foundProduct = products.find((p) => p.id === parseInt(id));
-        setProduct(foundProduct);
-    }, [id]);
-
-    if (!product) return <div>Loading...</div>;
+    if (!product) {
+        return (
+            <div className="text-center mt-16">
+                <h2 className="text-2xl font-semibold text-gray-700">Producto no encontrado</h2>
+            </div>
+        );
+    }
 
     const handleAddToCart = () => {
-        addToCart({ ...product, quantity });
+        addToCart(product, quantity);
+        toast.success("Agregaste "+ product.name +" a tu carrito de compras.",{
+            icon: <CheckCircle className="text-[#a5732db5]"/>,
+            style: {
+                color: "#a5732db5",
+                borderRadius: "8px",
+                fontSize: "20px",
+                width: "100%",
+            }
+        });
     };
 
+
+
     return (
-        <div className="container mx-auto p-4">
-            <img src={product.image} alt={product.name} className="w-full h-96 object-cover" />
-            <h2 className="text-2xl font-bold mt-4">{product.name}</h2>
-            <p className="mt-2">{product.description}</p>
-            <p className="mt-2 font-semibold">Material: {product.material}</p>
-            <p className="mt-2 font-semibold">Tamaño: {product.size}</p>
-            <div className="mt-4 flex justify-between items-center">
-                <span className="text-lg font-bold">${product.price}</span>
-
-                <div className="flex items-center">
-                    <button className="px-2 py-1 border" onClick={() => setQuantity(quantity > 1 ? quantity - 1 : 1)}>-</button>
-                    <span className="mx-2">{quantity}</span>
-                    <button className="px-2 py-1 border" onClick={() => setQuantity(quantity + 1)}>+</button>
+        <div className="container mx-auto mt-10 mb-10 px-4">
+            <div className="flex flex-col md:flex-row items-center gap-10">
+                <div className="w-full md:w-1/2 h-[36rem] rounded-md overflow-hidden shadow-lg">
+                    <img
+                        src={product.image}
+                        alt={`Imagen de ${product.name}`}
+                        className="w-full h-full object-cover brightness-75 rounded-md"
+                    />
                 </div>
+                <div className="w-full md:w-1/2 text-center md:text-left space-y-4">
+                    <h2 className="text-4xl font-bold text-gray-800">{product.name}</h2>
+                    <p className="text-2xl text-primary font-semibold">${product.price}</p>
+                    <p className="text-gray-600 text-lg">{product.description}</p>
 
-                <button onClick={handleAddToCart} className="bg-pink-500 text-white py-2 px-4 rounded-md">
-                    Agregar al carrito
-                </button>
+                    <div className="flex items-center justify-center md:justify-start gap-4 mt-4">
+                        <input
+                            type="number"
+                            min={1}
+                            value={quantity}
+                            onChange={(e) => setQuantity(Number(e.target.value))}
+                            className="w-20 px-3 py-2 border border-gray-300 rounded-md"
+                        />
+                        <Button
+                            onClick={handleAddToCart}
+                        >
+                            Agregar al carrito
+                        </Button>
+                    </div>
+                </div>
             </div>
         </div>
     );
-}
+};
+
+export default ProductDetail;
