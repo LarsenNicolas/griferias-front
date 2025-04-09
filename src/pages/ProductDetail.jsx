@@ -33,8 +33,6 @@ const ProductDetail = () => {
         });
     };
 
-
-
     return (
         <div className="container mx-auto mt-10 mb-10 px-4">
             <div className="flex flex-col md:flex-row items-center gap-10">

@@ -1,28 +1,87 @@
-import { Link } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { Link, useLocation } from "react-router-dom";
 import { useCart } from "../context/CartContext";
 import { ShoppingCartIcon } from "@heroicons/react/24/outline";
+import { motion, AnimatePresence } from "framer-motion";
 
 const Navbar = () => {
     const { cart } = useCart();
+    const location = useLocation();
+    const totalItems = cart.reduce((acc, item) => acc + item.quantity, 0);
 
-    return (
-        <nav className="bg-[#a5732db5] dark:bg-[#a5732db5] shadow-md">
-            <div className="container mx-auto px-4 py-8 flex justify-between items-center">
+    const isHome = location.pathname === "/";
 
-                    <Link to="/" className="hover:underline text-white">Inicio</Link>
-                    <Link to="/products" className="hover:underline text-white">Productos</Link>
-                    <Link to="/checkout" className="hover:underline text-white">Checkout</Link>
+    const [showNav, setShowNav] = useState(true);
+    const [scrollTimeout, setScrollTimeout] = useState(null);
 
-                    <Link to="/cart" className="relative">
-                        <ShoppingCartIcon className="w-6 h-6 text-white"/>
-                        {cart.length > 0 && (
-                            <span className="absolute -top-2 -right-2 bg-pink-500 text-white text-xs rounded-full px-1">
-                                {cart.reduce((acc, item) => acc + item.quantity, 0)}
-                            </span>
-                        )}
-                    </Link>
+    useEffect(() => {
+        if (!isHome) {
+            setShowNav(true);
+            return;
+        }
 
+        const handleScroll = () => {
+            setShowNav(true);
+            if (scrollTimeout) clearTimeout(scrollTimeout);
+
+            const timeout = setTimeout(() => {
+                setShowNav(false);
+            }, 2000);
+
+            setScrollTimeout(timeout);
+        };
+
+        window.addEventListener("scroll", handleScroll);
+
+        return () => {
+            window.removeEventListener("scroll", handleScroll);
+            clearTimeout(scrollTimeout);
+        };
+    }, [isHome, scrollTimeout]);
+
+    const navContent = (
+        <div className="container mx-auto px-6 py-4 flex justify-between items-center">
+            <Link to="/" className="text-white text-xl font-bold tracking-wide">
+                Aethernum
+            </Link>
+
+            <div className="flex gap-6 text-white font-medium">
+                <Link to="/products" className="hover:text-yellow-300 transition duration-300">Productos</Link>
             </div>
+
+            <Link to="/cart" className="relative">
+                <ShoppingCartIcon className="w-7 h-7 text-white transition-transform hover:scale-110 duration-300" />
+                {totalItems > 0 && (
+                    <span className="absolute -top-2 -right-2 bg-pink-500 text-white text-[10px] font-semibold rounded-full w-5 h-5 flex items-center justify-center">
+                        {totalItems}
+                    </span>
+                )}
+            </Link>
+        </div>
+    );
+
+    if (isHome) {
+        return (
+            <AnimatePresence>
+                {showNav && (
+                    <motion.nav
+                        initial={{ y: -80, opacity: 0 }}
+                        animate={{ y: 0, opacity: 1 }}
+                        exit={{ y: -80, opacity: 0 }}
+                        transition={{ duration: 0.3 }}
+                        className="bg-[#a5732db5] dark:bg-[#a5732db5] shadow-md fixed w-full top-0 z-50"
+                    >
+                        {navContent}
+                    </motion.nav>
+                )}
+            </AnimatePresence>
+        );
+    }
+
+    // Vistas distintas a home
+    return (
+        <nav className="bg-[#a5732db5] dark:bg-[#a5732db5] shadow-md w-full relative z-50">
+            {navContent}
         </nav>
     );
 };

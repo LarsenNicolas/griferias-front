@@ -1,9 +1,16 @@
 import { useCartStore } from "../store/useCartStore";
 import { Trash2 } from "lucide-react";
+import { useNavigate } from 'react-router-dom';
+import Button from "../components/Button.jsx";
 
 const Cart = () => {
     const cart = useCartStore((state) => state.cart);
     const removeFromCart = useCartStore((state) => state.removeFromCart);
+    const navigate = useNavigate();
+
+    const handleCheckout = () => {
+        navigate('/checkout');
+    };
 
     const total = cart.reduce(
         (acc, item) => acc + item.quantity * item.product.price,
@@ -34,7 +41,8 @@ const Cart = () => {
                                     {item.product.name}
                                 </h3>
                                 <p className="text-gray-600">{item.product.description}</p>
-                                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between text-sm gap-1 sm:gap-4 mt-2">
+                                <div
+                                    className="flex flex-col sm:flex-row sm:items-center sm:justify-between text-sm gap-1 sm:gap-4 mt-2">
                                     <span className="text-gray-700">
                                         Cantidad: <strong>{item.quantity}</strong>
                                     </span>
@@ -52,19 +60,22 @@ const Cart = () => {
                                 className="text-red-500 hover:text-red-700 transition"
                                 title="Quitar del carrito"
                             >
-                                <Trash2 className="w-6 h-6" />
+                                <Trash2 className="w-6 h-6"/>
                             </button>
                         </div>
                     ))}
 
                     <div className="mt-8 text-right">
                         <p className="text-xl font-bold text-gray-800">
-                            Total: <span className="text-primary">${total}</span>
+                            Total: ${total.toFixed(2)}
                         </p>
-                        <button className="mt-4 px-6 py-3 bg-primaryhover text-white rounded-md hover:bg-primary transition">
+                        <Button
+                            onClick={handleCheckout}
+                        >
                             Finalizar compra
-                        </button>
+                        </Button>
                     </div>
+
                 </div>
             )}
         </div>

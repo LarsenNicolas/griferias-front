@@ -1,44 +1,109 @@
-import {Link, useParams} from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import products from "../../mock/products";
-import {useEffect} from "react";
-import {toast} from "react-toastify";
+import { useEffect, useState, useMemo } from "react";
+import { toast } from "react-toastify";
+import categoriesData from "../../mock/categories";
+
 
 const Products = () => {
     const { id } = useParams();
-    const categoryId = parseInt(id);
-    const filteredProducts = id
-        ? products.filter((product) => product.category === categoryId)
-        : products;
+    const categoryIdFromParams = parseInt(id);
+
+    // Filtros
+    const [searchTerm, setSearchTerm] = useState("");
+    const [selectedCategory, setSelectedCategory] = useState(categoryIdFromParams || "");
+    const [sortOrder, setSortOrder] = useState(""); // "", "asc", "desc"
+
+    // Derivar categorías únicas
+    const categories = Array.from(new Set(products.map((p) => p.category)));
+
+    // Productos filtrados y ordenados
+    const filteredAndSortedProducts = useMemo(() => {
+        let result = products;
+
+        if (selectedCategory !== "") {
+            result = result.filter(p => p.category === parseInt(selectedCategory));
+        }
+
+        if (searchTerm.trim() !== "") {
+            result = result.filter(p =>
+                p.name.toLowerCase().includes(searchTerm.toLowerCase())
+            );
+        }
+
+        if (sortOrder === "asc") {
+            result = [...result].sort((a, b) => a.price - b.price);
+        } else if (sortOrder === "desc") {
+            result = [...result].sort((a, b) => b.price - a.price);
+        }
+
+        return result;
+    }, [searchTerm, selectedCategory, sortOrder]);
 
     useEffect(() => {
-        if (filteredProducts.length === 0) {
-            toast.warning("No hay productos disponibles en esta categoría.");
-
+        if (filteredAndSortedProducts.length === 0) {
+            toast.warning("No hay productos disponibles con los filtros aplicados.");
         }
-    }, [categoryId, filteredProducts.length]);
+    }, [filteredAndSortedProducts]);
 
     return (
-        <div className="container mt-8 mx-auto">
-            <div className="container mx-auto py-2">
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-                    {filteredProducts.map((product) => (
-                        <Link key={product.id} to={`/product/${product.id}`}>
-                            <div className="relative w-full h-[32rem] rounded-md overflow-hidden shadow-lg group">
-                                <img
-                                    src={product.image}
-                                    alt={`Imagen de ${product.name}`}
-                                    className="w-full h-full object-cover rounded-md transition-all duration-300 brightness-50 group-hover:brightness-100"
-                                />
+        <div className="container mx-auto mt-8 px-4">
+            {/* Filtros */}
+            <div className="mb-6 flex flex-col md:flex-row items-center gap-4 justify-between">
+                {/* Búsqueda */}
+                <input
+                    type="text"
+                    placeholder="Buscar por nombre..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    className="border px-4 py-2 rounded-md w-full md:w-1/3"
+                />
 
-                                <div className="absolute bottom-0 left-0 w-full bg-[#a5732db5] bg-opacity-60 text-white px-4 py-4">
-                                    <h2 className="text-xl font-semibold truncate">{product.name}</h2>
-                                    <p className="text-lg font-medium">${product.price}</p>
-                                    <p className="text-sm mt-1 truncate">{product.description}</p>
-                                </div>
-                            </div>
-                        </Link>
+                {/* Categoría */}
+                <select
+                    value={selectedCategory}
+                    onChange={(e) => setSelectedCategory(e.target.value)}
+                    className="border px-4 py-2 rounded-md w-full md:w-1/3"
+                >
+                    <option value="">Todas las categorías</option>
+                    {categoriesData.map((cat) => (
+                        <option key={cat.id} value={cat.id}>
+                            {cat.name}
+                        </option>
                     ))}
-                </div>
+                </select>
+
+                {/* Orden */}
+                <select
+                    value={sortOrder}
+                    onChange={(e) => setSortOrder(e.target.value)}
+                    className="border px-4 py-2 rounded-md w-full md:w-1/3"
+                >
+                    <option value="">Ordenar por precio</option>
+                    <option value="asc">Menor a mayor</option>
+                    <option value="desc">Mayor a menor</option>
+                </select>
+            </div>
+
+            {/* Productos */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                {filteredAndSortedProducts.map((product) => (
+                    <Link key={product.id} to={`/product/${product.id}`}>
+                        <div className="relative w-full h-[32rem] rounded-md overflow-hidden shadow-lg group">
+                            <img
+                                src={product.image}
+                                alt={`Imagen de ${product.name}`}
+                                className="w-full h-full object-cover rounded-md transition-all duration-300 brightness-50 group-hover:brightness-100"
+                            />
+
+                            <div className="absolute bottom-0 left-0 w-full bg-[#a5732db5] bg-opacity-60 text-white px-4 py-4">
+                                <h2 className="text-xl font-semibold truncate">{product.name}</h2>
+                                <p className="text-lg font-medium">${product.price}</p>
+                                <p className="text-sm mt-1 truncate">{product.description}</p>
+                            </div>
+                        </div>
+                    </Link>
+                ))}
             </div>
         </div>
     );
