@@ -32,7 +32,7 @@ const Checkout = () => {
         return newErrors;
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
         setSubmitted(true);
         const newErrors = validate();
@@ -40,14 +40,39 @@ const Checkout = () => {
 
         if (Object.keys(newErrors).length === 0) {
             setIsProcessing(true);
-            setTimeout(() => {
-                alert('¡Gracias por tu compra! 🎉');
-                clearCart();
-                setIsProcessing(false);
-                navigate('/');
-            }, 2000);
+
+            fetch('/api/sendMail', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    name,
+                    email,
+                    cart,
+                    total,
+                }),
+            })
+                .then(res => {
+                    if (!res.ok) throw new Error('Error al enviar el mail', res);
+                    return res.json();
+                })
+                .then(() => {
+                    alert('¡Gracias por tu compra! 🎉 Revisa tu email.');
+                    clearCart();
+                    navigate('/');
+                })
+                .catch(err => {
+                    console.error(err);
+                    alert('Hubo un error al enviar el mail 😢');
+                })
+                .finally(() => {
+                    setIsProcessing(false);
+                });
         }
     };
+
+
 
     return (
         <div className="container mx-auto p-4">
@@ -150,8 +175,7 @@ const Checkout = () => {
                     </form>
                 )}
             </div>
-            </div>
-            );
-            };
-
-            export default Checkout;
+        </div>
+    );
+};
+export default Checkout;
