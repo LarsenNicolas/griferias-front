@@ -16,6 +16,7 @@ const Checkout = () => {
     const [errors, setErrors] = useState({});
     const [isProcessing, setIsProcessing] = useState(false);
     const [submitted, setSubmitted] = useState(false);
+    const [showModal, setShowModal] = useState(false);
 
     const total = cart.reduce((sum, item) => sum + item.product.price * item.quantity, 0);
 
@@ -58,9 +59,12 @@ const Checkout = () => {
                     return res.json();
                 })
                 .then(() => {
-                    alert('¡Gracias por tu compra! 🎉 Revisa tu email.');
+                    setShowModal(true);
                     clearCart();
-                    navigate('/');
+                    setTimeout(() => {
+                        setShowModal(false);
+                        navigate('/');
+                    }, 3000);
                 })
                 .catch(err => {
                     console.error(err);
@@ -72,10 +76,18 @@ const Checkout = () => {
         }
     };
 
-
-
     return (
         <div className="container mx-auto p-4">
+            {showModal && (
+                <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+                    <div className="bg-white p-6 rounded-lg shadow-xl text-center max-w-sm mx-auto">
+                        <h3 className="text-2xl font-bold mb-2">¡Gracias por tu compra! 🎉</h3>
+                        <p className="text-gray-600 mb-4">En breve serás redirigido al inicio.</p>
+                        <div className="loader mx-auto border-t-4 border-[#a5732db5] border-solid rounded-full w-8 h-8 animate-spin"></div>
+                    </div>
+                </div>
+            )}
+
             <div className="max-w-2xl mx-auto">
                 <h2 className="text-2xl font-bold mb-4">Finaliza tu Compra</h2>
                 {cart.length === 0 ? (
@@ -178,4 +190,5 @@ const Checkout = () => {
         </div>
     );
 };
+
 export default Checkout;
