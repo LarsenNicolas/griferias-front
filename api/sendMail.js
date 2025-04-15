@@ -20,17 +20,42 @@ export default async function handler(req, res) {
     ).join('');
 
     const mailOptions = {
-        from: process.env.EMAIL_USER,
+        from: `"Aethernum" <${process.env.EMAIL_USER}>`,
         to: email,
-        subject: '¡Gracias por tu compra!',
+        subject: "🌿 ¡Gracias por tu compra, " + name + "!",
         html: `
-      <h2>¡Hola ${name}!</h2>
-      <p>Gracias por tu compra. Este es el resumen de tu pedido:</p>
-      <ul>${itemsHtml}</ul>
-      <p><strong>Total:</strong> $${total.toFixed(2)}</p>
-      <p>Te estaremos contactando pronto para coordinar el envío 📦</p>
-    `,
-    };
+          <div style="font-family: 'Georgia', serif; background-color: #f9f4ef; color: #3c2f2f; padding: 24px;">
+            <div style="max-width: 600px; margin: auto; background: white; border-radius: 16px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.05);">
+              <div style="background-color: #a5732d; padding: 24px; text-align: center;">
+                <img src="https://www.aeternum-accesorios.com.ar/logo.jpeg" alt="Aethernum Logo" style="height: 80px; margin-bottom: 16px;" />
+                <h1 style="color: white; font-size: 28px; margin: 0;">Gracias por tu compra</h1>
+              </div>
+        
+              <div style="padding: 24px;">
+                <p style="font-size: 18px;">Hola <strong>${name}</strong>,</p>
+                <p>¡Gracias por elegir Aethernum! Te compartimos el resumen de tu pedido:</p>
+                
+                <div style="margin: 24px 0;">
+                  <ul style="padding-left: 20px; font-size: 16px; line-height: 1.6; color: #5e4a4a;">
+                    ${itemsHtml}
+                  </ul>
+                </div>
+        
+                <p style="font-size: 18px;"><strong>Total:</strong> $${total.toFixed(2)}</p>
+        
+                <p style="margin-top: 24px;">En breve nos pondremos en contacto para coordinar el envío 📦.</p>
+                <p style="margin-top: 24px;">Gracias por confiar en nosotros,</p>
+                <p><em>El equipo de Aethernum</em></p>
+              </div>
+        
+              <div style="background-color: #f2e6da; text-align: center; padding: 16px; font-size: 14px; color: #93765d;">
+                <p>Síguenos en Instagram @aethernum.store</p>
+              </div>
+            </div>
+          </div>
+          `,
+        };
+
 
     try {
         await transporter.sendMail(mailOptions);
