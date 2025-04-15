@@ -29,7 +29,7 @@ const Home = () => {
                         className="h-32 md:h-52 mb-6 drop-shadow-lg animate-float"
                     />
                     <h1 className="text-5xl sm:text-7xl font-serif font-bold drop-shadow-md">
-                        Aethernum
+                        Aeternum
                     </h1>
                     <p className="mt-4 text-lg sm:text-2xl font-light min-h-[3rem]">
                         {slogan}

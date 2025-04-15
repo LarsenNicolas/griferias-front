@@ -42,7 +42,7 @@ const Navbar = () => {
     const navContent = (
         <div className="container mx-auto px-6 py-4 flex justify-between items-center">
             <Link to="/" className="text-white text-xl font-bold tracking-wide">
-                Aethernum
+                Aeternum
             </Link>
 
             <div className="flex gap-6 text-white font-medium">
