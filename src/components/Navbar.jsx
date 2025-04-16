@@ -1,16 +1,14 @@
 import { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { useCart } from "../context/CartContext";
 import { TagIcon, ShoppingCartIcon } from "@heroicons/react/24/outline";
 import { motion, AnimatePresence } from "framer-motion";
+import {useCartStore} from "../store/useCartStore.js";
 
 const Navbar = () => {
-    const { cart } = useCart();
-    const location = useLocation();
+    const cart = useCartStore((state) => state.cart);
     const totalItems = cart.reduce((acc, item) => acc + item.quantity, 0);
-
+    const location = useLocation();
     const isHome = location.pathname === "/";
-
     const [showNav, setShowNav] = useState(true);
     const [scrollTimeout, setScrollTimeout] = useState(null);
 
