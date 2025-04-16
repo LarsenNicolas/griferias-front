@@ -21,7 +21,7 @@ export default async function handler(req, res) {
 
     const ownerMailOptions = {
         from: `"Aeternum" <${process.env.EMAIL_USER}>`,
-        to: 'ventas@aeternum-accesorios.com.ar',
+        to: 'aeternumaccesoriosventas@gmail.com',
         subject: `Nueva venta realizada por ${name}`,
         html: `
             <div style="font-family: sans-serif; padding: 20px; background: #fdf9f3; color: #333;">
