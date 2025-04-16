@@ -19,7 +19,25 @@ export default async function handler(req, res) {
         `<li>${item.quantity} x ${item.product.name} - $${item.product.price}</li>`
     ).join('');
 
-    const mailOptions = {
+    const ownerMailOptions = {
+        from: `"Aeternum" <${process.env.EMAIL_USER}>`,
+        to: 'ventas@aeternum-accesorios.com.ar',
+        subject: `Nueva venta realizada por ${name}`,
+        html: `
+            <div style="font-family: sans-serif; padding: 20px; background: #fdf9f3; color: #333;">
+                <h2>🛍️ ¡Nueva venta!</h2>
+                <p><strong>Cliente:</strong> ${name}</p>
+                <p><strong>Email:</strong> ${email}</p>
+                <p><strong>WhatsApp:</strong> ${whatsapp}</p>
+                <p><strong>Total:</strong> $${total.toFixed(2)}</p>
+                <p><strong>Carrito:</strong></p>
+                <ul>${itemsHtml}</ul>
+                <p>Podés contactarlo para coordinar el envío o confirmar el pago.</p>
+            </div>
+        `,
+    };
+
+    const customerMailOptions = {
         from: `"Aeternum" <${process.env.EMAIL_USER}>`,
         to: email,
         subject: "¡Gracias por tu compra, " + name + "!",
@@ -56,9 +74,9 @@ export default async function handler(req, res) {
           `,
         };
 
-
     try {
-        await transporter.sendMail(mailOptions);
+        await transporter.sendMail(customerMailOptions);
+        await transporter.sendMail(ownerMailOptions);
         res.status(200).json({ message: 'Correo enviado con éxito' });
     } catch (error) {
         console.error('Error al enviar el correo:', error);
