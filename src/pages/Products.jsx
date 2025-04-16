@@ -93,7 +93,7 @@ const Products = () => {
                             <img
                                 src={product.image}
                                 alt={`Imagen de ${product.name}`}
-                                className="w-full h-full object-cover rounded-md transition-all duration-300 brightness-50 group-hover:brightness-100"
+                                className="w-full h-full object-cover rounded-md transition-all duration-300 brightness-100 md:brightness-50 md:group-hover:brightness-100"
                             />
 
                             <div className="absolute bottom-0 left-0 w-full bg-[#a5732db5] bg-opacity-60 text-white px-4 py-4">

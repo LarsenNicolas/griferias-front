@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { useCart } from "../context/CartContext";
-import { ShoppingCartIcon } from "@heroicons/react/24/outline";
+import { TagIcon, ShoppingCartIcon } from "@heroicons/react/24/outline";
 import { motion, AnimatePresence } from "framer-motion";
 
 const Navbar = () => {
@@ -45,18 +45,21 @@ const Navbar = () => {
                 Aeternum
             </Link>
 
-            <div className="flex gap-6 text-white font-medium">
-                <Link to="/products" className="hover:text-yellow-300 transition duration-300">Productos</Link>
-            </div>
+            {/* Íconos a la derecha */}
+            <div className="flex gap-5 items-center">
+                <Link to="/products" className="relative group">
+                    <TagIcon className="w-6 h-6 text-white transition-transform group-hover:scale-110 duration-300" />
+                </Link>
 
-            <Link to="/cart" className="relative">
-                <ShoppingCartIcon className="w-7 h-7 text-white transition-transform hover:scale-110 duration-300" />
-                {totalItems > 0 && (
-                    <span className="absolute -top-2 -right-2 bg-pink-500 text-white text-[10px] font-semibold rounded-full w-5 h-5 flex items-center justify-center">
+                <Link to="/cart" className="relative group">
+                    <ShoppingCartIcon className="w-7 h-7 text-white transition-transform group-hover:scale-110 duration-300" />
+                    {totalItems > 0 && (
+                        <span className="absolute -top-2 -right-2 bg-pink-500 text-white text-[10px] font-semibold rounded-full w-5 h-5 flex items-center justify-center">
                         {totalItems}
                     </span>
-                )}
-            </Link>
+                    )}
+                </Link>
+            </div>
         </div>
     );
 
