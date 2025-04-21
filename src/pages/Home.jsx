@@ -1,16 +1,23 @@
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import categories from "../../mock/categories";
-import { useTypewriter } from "../utils/useTypewriter.js";
 import { Parallax } from 'react-scroll-parallax';
+import { getHomeInfo } from "../lib/get-home-info.js";
+import {useEffect, useState} from "react";
 
 const fadeUp = {
     hidden: { opacity: 0, y: 40 },
     visible: { opacity: 1, y: 0, transition: { duration: 0.8 } },
 };
 
-const Home = () => {
-    const slogan = useTypewriter("La escencia de la eternidad convertida en estilo", 60);
+export const Home = () => {
+    const [title, setTitle] = useState("");
+
+    useEffect(() => {
+        getHomeInfo().then(data => {
+            setTitle(data?.title || "Sin título");
+        });
+    }, []);
 
     return (
         <div className="w-full mx-auto">
@@ -29,12 +36,8 @@ const Home = () => {
                         className="h-32 md:h-52 mb-6 drop-shadow-lg animate-float"
                     />
                     <h1 className="text-5xl sm:text-7xl font-serif font-bold drop-shadow-md">
-                        Aeternum
+                        {title}
                     </h1>
-                    <p className="mt-4 text-lg sm:text-2xl font-light min-h-[3rem]">
-                        {slogan}
-                        <span className="border-r-2 border-white animate-pulse ml-1" />
-                    </p>
                 </div>
             </div>
 
@@ -79,5 +82,3 @@ const Home = () => {
         </div>
     );
 };
-
-export default Home;
